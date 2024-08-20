@@ -9,7 +9,7 @@ export default function AddUser() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("FACULTY");
-  const [department, setDepartment] = useState("");
+  const [department, setDepartment] = useState("CS");
   const [leaveCredits, setLeaveCredits] = useState({
     casual_leave: 0,
     compensatory_leave: 0,
@@ -104,20 +104,20 @@ export default function AddUser() {
           <option value="MCA">MCA</option>
           <option value="MBA">MBA</option>
         </select>
-        <input
+        {/* <input
           className={styles.input}
           id="department"
           name="department"
           type="text"
           required
-        />
-        <label className={styles.label} htmlFor="department">
+        /> */}
+        <label className={styles.label} htmlFor="casual-leave-credits">
           Casual Leave Credits
         </label>
         <input
           className={styles.input}
-          id="department"
-          name="department"
+          id="casual-leave-credits"
+          name="casual-leave-credits"
           type="text"
           required
           value={leaveCredits.casual_leave}
@@ -129,13 +129,13 @@ export default function AddUser() {
             }));
           }}
         />
-        <label className={styles.label} htmlFor="department">
+        <label className={styles.label} htmlFor="compensatory-leave-credits">
           Compensatory Leave Credits
         </label>
         <input
           className={styles.input}
-          id="department"
-          name="department"
+          id="compensatory-leave-credits"
+          name="compensatory-leave-credits"
           type="text"
           required
           value={leaveCredits.compensatory_leave}

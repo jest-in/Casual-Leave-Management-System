@@ -191,20 +191,24 @@ export const PATCH = catchAsync(async (request, context) => {
     else if (leave.leaveType === "casual leave")
       leaveTypeFieldForQuery = "leave_credits.casual_leave";
 
-    await User.findOneAndUpdate(
-      {
-        _id: leave.userId,
-        [leaveTypeFieldForQuery]: { $gt: 0 },
-      },
-      {
-        $inc: {
-          [leaveTypeFieldForQuery]: -1,
+    // Deduct from leave credits
+    if (updatingFields["status"] === "Approved") {
+      await User.findOneAndUpdate(
+        {
+          _id: leave.userId,
+          [leaveTypeFieldForQuery]: { $gt: 0 },
         },
-      },
-      {
-        session,
-      }
-    );
+        {
+          $inc: {
+            [leaveTypeFieldForQuery]:
+              leave.leaveDuration === "full day" ? -1 : -0.5,
+          },
+        },
+        {
+          session,
+        }
+      );
+    }
 
     // Commit transaction if the update is successful
     await session.commitTransaction();

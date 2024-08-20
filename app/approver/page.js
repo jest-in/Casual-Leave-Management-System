@@ -91,7 +91,7 @@ export default function Dashboard() {
                   <tr key={index}>
                     <td>{document.userId.username}</td>
                     <td>{document.description}</td>
-                    <td>{document._id}</td>
+                    <td>{document.leaveDuration}</td>
                     <td>
                       <button
                         disabled={isRejected}
