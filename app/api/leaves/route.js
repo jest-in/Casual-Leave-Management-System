@@ -26,8 +26,6 @@ export const GET = catchAsync(async (request, context) => {
     select: "username email -_id",
   });
 
-  console.log(leaves);
-
   // Only retrieve those leaves which are approved by lower level approvers
   const filteredLeaves = leaves.filter((leave) => {
     // If the approver is the first one to approve in the hierarchy
@@ -61,11 +59,12 @@ export const POST = catchAsync(async (request) => {
   // Get user by ID
   const user = await User.findById(userId);
 
+  const creditsBasedOnLeaveDuration = leaveDuration === "full day" ? 1 : 0.5;
   if (leaveType === "casual leave") {
     const casualLeaveCreditsBalance = user.leave_credits.casual_leave;
-    if (!casualLeaveCreditsBalance)
+    if (casualLeaveCreditsBalance < creditsBasedOnLeaveDuration)
       return NextResponse.json(
-        { error: "Casual leave credits are already exhausted" },
+        { error: "Casual leave credits are not sufficient" },
         { status: 400 }
       );
   }
@@ -73,9 +72,9 @@ export const POST = catchAsync(async (request) => {
   if (leaveType === "compensatory leave") {
     const compensatoryLeaveCreditsBalance =
       user.leave_credits.compensatory_leave;
-    if (!compensatoryLeaveCreditsBalance)
+    if (compensatoryLeaveCreditsBalance < creditsBasedOnLeaveDuration)
       return NextResponse.json(
-        { error: "Compensatory leave credits are already exhausted" },
+        { error: "Compensatory leave credits are not sufficient" },
         { status: 400 }
       );
   }
@@ -193,10 +192,12 @@ export const PATCH = catchAsync(async (request, context) => {
 
     // Deduct from leave credits
     if (updatingFields["status"] === "Approved") {
-      await User.findOneAndUpdate(
+      const user = await User.findOneAndUpdate(
         {
           _id: leave.userId,
-          [leaveTypeFieldForQuery]: { $gt: 0 },
+          [leaveTypeFieldForQuery]: {
+            $gte: leave.leaveDuration === "full day" ? 1 : 0.5,
+          },
         },
         {
           $inc: {
@@ -208,6 +209,7 @@ export const PATCH = catchAsync(async (request, context) => {
           session,
         }
       );
+      if (!user) throw new Error("Insufficient credits");
     }
 
     // Commit transaction if the update is successful
