@@ -72,47 +72,79 @@ export default function Dashboard() {
       </nav>
       <main>
         <section>
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Id</th>
-                <th colSpan={2}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {approvalsList.map((document, index) => {
-                console.log("Approvers:", document.approvers);
-                const isRejected = document.approvers.some(
-                  (approver) => approver.status === "Rejected"
-                );
-                return (
-                  <tr key={index}>
-                    <td>{document.userId.username}</td>
-                    <td>{document.description}</td>
-                    <td>{document.leaveDuration}</td>
-                    <td>
-                      <button
-                        disabled={isRejected}
-                        style={{ backgroundColor: isRejected ? "red" : null }}
-                        onClick={() => rejectBtnHandler(index, document._id)}
-                      >
-                        {isRejected ? "Rejected" : "Reject"}
-                      </button>
-                    </td>
-                    <td>
-                      <button
-                        onClick={() => approveBtnHandler(index, document._id)}
-                      >
-                        Approve
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          {approvalsList.length > 0 ? (
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Duration</th>
+                  <th>Id</th>
+                  <th colSpan={2}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {approvalsList.map((document, index) => {
+                  console.log("Approvers:", document.approvers);
+                  let rejectReason = "";
+                  const isRejected = document.approvers.some(
+                    (approver, index) => {
+                      if (approver.status === "Rejected")
+                        rejectReason = approver.rejectReason;
+                      return approver.status === "Rejected";
+                    }
+                  );
+                  return (
+                    <tr key={index}>
+                      <td>{document.userId.username}</td>
+                      <td>{document.description}</td>
+                      <td>{document.leaveDuration}</td>
+                      <td>
+                        <div
+                          style={{
+                            display: "flex",
+                          }}
+                        >
+                          <button
+                            disabled={isRejected}
+                            style={{
+                              display: "inline-block",
+                              backgroundColor: isRejected ? "red" : null,
+                            }}
+                            onClick={() =>
+                              rejectBtnHandler(index, document._id)
+                            }
+                          >
+                            {isRejected ? "Rejected" : "Reject"}
+                          </button>
+                          <div
+                            style={{
+                              display: "inline-block",
+                              width: "10rem",
+                              height: "2.5rem",
+                              overflow: "auto",
+                            }}
+                          >
+                            {rejectReason}
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <button
+                          onClick={() => approveBtnHandler(index, document._id)}
+                        >
+                          Approve
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          ) : (
+            <div>
+              <strong>No Leaves to be approved</strong>
+            </div>
+          )}
         </section>
       </main>
     </div>

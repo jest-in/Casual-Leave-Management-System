@@ -72,32 +72,40 @@ export default function Dashboard() {
             <h2>Applied leaves</h2>
             <button onClick={() => setLeaveModalOpen(true)}>Apply</button>
           </div>
-          <table>
-            <thead>
-              <tr>
-                <th>Sl.No</th>
-                <th>Leave Type</th>
-                <th>Date</th>
-                <th>Description</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {leaves.map((leave, index) => (
-                <tr key={index}>
-                  <td>{index + 1}</td>
-                  <td>{leave.leaveType}</td>
-                  <td>{leave.description}</td>
-                  <td>{new Date(leave.date).toDateString()}</td>
-                  <td>
-                    <span className={`${leave.status.toLowerCase()}`}>
-                      {leave.status}
-                    </span>
-                  </td>
+          {leaves.length > 0 ? (
+            <table>
+              <thead>
+                <tr>
+                  <th>Sl.No</th>
+                  <th>Leave Type</th>
+                  <th>Description</th>
+                  <th>Date</th>
+                  <th>Duration</th>
+                  <th>Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {leaves.map((leave, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>{leave.leaveType}</td>
+                    <td>{leave.description}</td>
+                    <td>{new Date(leave.date).toDateString()}</td>
+                    <td>{leave.leaveDuration}</td>
+                    <td>
+                      <span className={`${leave.status.toLowerCase()}`}>
+                        {leave.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <div>
+              <strong>Nothing to show</strong>
+            </div>
+          )}
         </section>
       </main>
     </div>
