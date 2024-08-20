@@ -170,14 +170,27 @@ table tbody td > span.pending {
   font-weight: bolder;
 }
 
-table tbody td > span.approved {
+table tbody td > div {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+table tbody td > div > span.approved {
   color: rgb(35, 150, 35);
   font-weight: bolder;
 }
 
-table tbody td > span.rejected {
+table tbody td > div > span.rejected {
   color: red;
   font-weight: bolder;
+}
+
+table tbody td > div > span:nth-child(2) {
+  display: inline-block;
+  width: 10rem;
+  height: 2.5rem;
+  overflow: auto;
 }
 
 /* Make the table responsive */

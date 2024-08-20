@@ -77,8 +77,9 @@ export default function Dashboard() {
               <thead>
                 <tr>
                   <th>Name</th>
+                  <th>Description</th>
+                  <th>Date</th>
                   <th>Duration</th>
-                  <th>Id</th>
                   <th colSpan={2}>Actions</th>
                 </tr>
               </thead>
@@ -97,6 +98,7 @@ export default function Dashboard() {
                     <tr key={index}>
                       <td>{document.userId.username}</td>
                       <td>{document.description}</td>
+                      <td>{new Date(document.date).toDateString()}</td>
                       <td>{document.leaveDuration}</td>
                       <td>
                         <div

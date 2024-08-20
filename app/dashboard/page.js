@@ -85,20 +85,31 @@ export default function Dashboard() {
                 </tr>
               </thead>
               <tbody>
-                {leaves.map((leave, index) => (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>{leave.leaveType}</td>
-                    <td>{leave.description}</td>
-                    <td>{new Date(leave.date).toDateString()}</td>
-                    <td>{leave.leaveDuration}</td>
-                    <td>
-                      <span className={`${leave.status.toLowerCase()}`}>
-                        {leave.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
+                {leaves.map((leave, index) => {
+                  let rejectReason = "";
+                  const isRejected = leave.approvers.some((approver) => {
+                    if (approver.status === "Rejected")
+                      rejectReason = approver.rejectReason;
+                    return approver.status === "Rejected";
+                  });
+                  return (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td>{leave.leaveType}</td>
+                      <td>{leave.description}</td>
+                      <td>{new Date(leave.date).toDateString()}</td>
+                      <td>{leave.leaveDuration}</td>
+                      <td>
+                        <div>
+                          <span className={`${leave.status.toLowerCase()}`}>
+                            {leave.status}
+                          </span>
+                          <span>{isRejected ? rejectReason : ""}</span>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           ) : (
