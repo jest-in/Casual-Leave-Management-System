@@ -8,6 +8,12 @@ import styles from "./LeaveCards.module.css";
 
 export default function Dashboard() {
   const [leaves, setLeaves] = useState([]);
+
+  const [leaveCredits, setLeaveCredits] = useState({
+    casual_leave: 0,
+    compensatory_leave: 0,
+  });
+
   const [leaveModalOpen, setLeaveModalOpen] = useState(false);
 
   const router = useRouter();
@@ -27,8 +33,11 @@ export default function Dashboard() {
   async function fetchData() {
     const userResponse = await axiosInstance.get("/me");
     const userData = userResponse.data.body;
+    const userCreditsResponse = await axiosInstance.get(
+      `/leaves/${userData.id}/leave-credits`
+    );
+    setLeaveCredits(userCreditsResponse.data.body.leave_credits);
     const response = await axiosInstance.get(`/leaves/${userData.id}`);
-    console.log(response.data.body);
     setLeaves(response.data.body);
   }
 
@@ -49,11 +58,13 @@ export default function Dashboard() {
         <div className={styles.cardContainer}>
           <div className={styles.card}>
             <div className={styles.cardTitle}>Casual Leave Credits</div>
-            <div className={styles.cardValue}>{"10"}</div>
+            <div className={styles.cardValue}>{leaveCredits.casual_leave}</div>
           </div>
           <div className={styles.card}>
             <div className={styles.cardTitle}>Compensatory Leave Credits</div>
-            <div className={styles.cardValue}>{"5"}</div>
+            <div className={styles.cardValue}>
+              {leaveCredits.compensatory_leave}
+            </div>
           </div>
         </div>
         <section>
